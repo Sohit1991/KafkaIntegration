@@ -1,4 +1,5 @@
 using Confluent.Kafka;
+using KafkaProducer.KafkaProdDepend;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
@@ -14,10 +15,12 @@ namespace KafkaProducer.Controllers
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
+        private readonly IWeatherDataPublisher weatherDataPublisher;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger,IWeatherDataPublisher weatherDataPublisher)
         {
             _logger = logger;
+            this.weatherDataPublisher = weatherDataPublisher;
         }
 
         [HttpGet]
@@ -49,6 +52,13 @@ namespace KafkaProducer.Controllers
                 Summary = Summaries[Random.Shared.Next(Summaries.Length)]
             })
             .ToArray();
+        }
+
+        [HttpPost("getweatherdata")]
+        public async Task GetWeatherData(Weather weather)
+        {
+            await weatherDataPublisher.ProduceMessage(weather);
+            
         }
     }
 }

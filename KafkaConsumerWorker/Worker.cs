@@ -31,7 +31,10 @@ namespace KafkaConsumerWorker
                     if (consumerData is not null)
                     {
                         var product = JsonSerializer.Deserialize<Product>(consumerData.Message.Value);
-                        Console.WriteLine($"ProductId: {product.Id} \n ProductName:{product.Name}");
+                        Console.WriteLine($"ProductId: {product?.Id} \n ProductName:{product?.Name}");
+
+                        var weather = JsonSerializer.Deserialize<Weather>(consumerData.Message.Value);
+                        Console.WriteLine($"Temperature: {weather?.temperature} \n State:{weather?.state}");
                     }
                 }
             }
@@ -42,5 +45,5 @@ namespace KafkaConsumerWorker
             //await Task.Delay(1000, stoppingToken);
         }
     }
-
+    public record Weather(string state, int temperature);
 }
